@@ -17,7 +17,8 @@
   },
   "homepage": "https://github.com/xrtShu/node_anydoor#readme",
   "dependencies": {
-    "handlebars": "^4.0.12"
+    "handlebars": "^4.0.12",
+    "mime-types": "^2.1.21"
   },
   "devDependencies": {
     "chalk": "^2.4.2"
