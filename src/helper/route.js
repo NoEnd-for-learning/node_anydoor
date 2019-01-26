@@ -6,6 +6,7 @@ const promisify = require('util').promisify;
 const fs_stat = promisify(fs.stat);
 const fs_readdir = promisify(fs.readdir);
 const conf = require('../config/default-config');
+const compress = require('../helper/compress');
 
 const tplPath = path.join(__dirname, '../template/dir.tpl');
 // 同步读取，因为只执行一次，并且后面的代码依赖到它
@@ -18,7 +19,12 @@ module.exports = async function (req, res, filePath) {
         if (stats.isFile()) {
             res.statusCode = 200;
             res.setHeader('Content-Type', mime.lookup(filePath));
-            fs.createReadStream(filePath).pipe(res);
+
+            let rs = fs.createReadStream(filePath);
+            if (filePath.match(conf.compress)) {
+                rs = compress(rs, req, res);
+            }
+            rs.pipe(res);
         } else if (stats.isDirectory()) {
             const files = await fs_readdir(filePath);
             res.statusCode = 200;
