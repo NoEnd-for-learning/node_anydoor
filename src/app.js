@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const path = require('path');
 const conf = require('./config/default-config');
 const route = require('./helper/route');
+const openUrl = require('./helper/openUrl');
 
 class Server {
     constructor (config) {
@@ -19,6 +20,9 @@ class Server {
         server.listen(port, hostname, () => {
             const address = `http://${hostname}:${port}/`;
             console.log(`Server listening at ${chalk.blue(address)}`);
+
+            // 尝试在浏览器自动打开 url
+            openUrl(address);
         });
     }
 }
