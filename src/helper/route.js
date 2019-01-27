@@ -8,6 +8,7 @@ const fs_readdir = promisify(fs.readdir);
 const conf = require('../config/default-config');
 const compress = require('../helper/compress');
 const range = require('../helper/range');
+const isFresh = require('../helper/cache');
 
 const tplPath = path.join(__dirname, '../template/dir.tpl');
 // 同步读取，因为只执行一次，并且后面的代码依赖到它
@@ -20,6 +21,13 @@ module.exports = async function (req, res, filePath) {
         if (stats.isFile()) {
             res.statusCode = 200;
             res.setHeader('Content-Type', mime.lookup(filePath));
+
+            // cache
+            if (isFresh(stats, req, res)) {
+                res.statusCode = 304;
+                res.end();
+                return;
+            }
 
             // range
             let rs;
