@@ -5,7 +5,6 @@ const mime = require('mime-types');
 const promisify = require('util').promisify;
 const fs_stat = promisify(fs.stat);
 const fs_readdir = promisify(fs.readdir);
-const conf = require('../config/default-config');
 const compress = require('../helper/compress');
 const range = require('../helper/range');
 const isFresh = require('../helper/cache');
@@ -15,7 +14,7 @@ const tplPath = path.join(__dirname, '../template/dir.tpl');
 const source = fs.readFileSync(tplPath);
 const template = Handlebars.compile(source.toString());
 
-module.exports = async function (req, res, filePath) {
+module.exports = async function (req, res, filePath, conf) {
     try {
         const stats = await fs_stat(filePath);
         if (stats.isFile()) {

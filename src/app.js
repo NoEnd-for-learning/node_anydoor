@@ -4,12 +4,23 @@ const path = require('path');
 const conf = require('./config/default-config');
 const route = require('./helper/route');
 
-const server = http.createServer((req, res) => {
-    const filePath = path.join(conf.root, req.url);
-    route(req, res, filePath);
-});
+class Server {
+    constructor (config) {
+        this.conf = Object.assign({}, conf, config);
+    }
 
-server.listen(conf.port, conf.hostname, () => {
-    const addr = `http://${conf.hostname}:${conf.port}/`;
-    console.log(`Server listenning at ${chalk.blue(addr)}`);
-});
+    start() {
+        const { root, port, hostname } = this.conf;
+        const server = http.createServer((req, res) => {
+            const filePath = path.join(root, req.url);
+            route(req, res, filePath, this.conf);
+        });
+
+        server.listen(port, hostname, () => {
+            const address = `http://${hostname}:${port}/`;
+            console.log(`Server listening at ${chalk.blue(address)}`);
+        });
+    }
+}
+
+module.exports = Server;
